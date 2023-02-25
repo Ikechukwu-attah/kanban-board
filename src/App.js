@@ -2,39 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { v4 as uuid } from "uuid";
-
-const itemsFromBackend = [
-  { id: uuid(), content: "First task" },
-  { id: uuid(), content: "Second task" },
-  { id: uuid(), content: "Third task" },
-  { id: uuid(), content: "Fourth task" },
-];
-
-const columnsFromBackend = [
-  {
-    id: uuid(),
-    name: "Todo",
-    items: itemsFromBackend,
-  },
-
-  {
-    id: uuid(),
-    name: "Progress",
-    items: [],
-  },
-
-  {
-    id: uuid(),
-    name: "Blocked",
-    items: [],
-  },
-
-  {
-    id: uuid(),
-    name: "Completed",
-    items: [],
-  },
-];
+import { columnsFromBackend } from "./Data";
 
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
@@ -67,7 +35,7 @@ const onDragEnd = (result, columns, setColumns) => {
     setColumns(updatedColumns);
   } else {
     const sourceItems = Array.from(sourceColumn.items);
-    console.log("sourceItems:", result);
+    console.log("sourceItems");
     const [reorderedItem] = sourceItems.splice(result.source.index, 1);
     console.log("reordered:", reorderedItem);
     const destinationItems = Array.from(destinationColumn.items);
@@ -110,7 +78,12 @@ function App() {
                 alignItems: "center",
               }}
             >
-              <h2>{name}</h2>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+              >
+                <h2>{name}</h2>
+                <h5>{items.length}</h5>
+              </div>
               <div style={{ margin: "8px" }}>
                 <Droppable key={id} droppableId={id}>
                   {(provided, snapshot) => {
@@ -148,11 +121,11 @@ function App() {
                                       ? "#456c86"
                                       : name === "Todo"
                                       ? "#263B4A"
-                                      : name === "Progress"
-                                      ? "green"
+                                      : name === "In Progress"
+                                      ? "#FFCC00"
                                       : name === "Blocked"
                                       ? "red"
-                                      : "purple",
+                                      : "green",
                                     color: "white",
                                     ...provided.draggableProps.style,
                                   }}
