@@ -58,95 +58,98 @@ const onDragEnd = (result, columns, setColumns) => {
 function App() {
   const [columns, setColumns] = useState(columnsFromBackend);
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        height: "100%",
-        margin: 8,
-      }}
-    >
-      <DragDropContext
-        onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+    <>
+      <h2 style={{ textAlign: "center" }}>Kanban Board</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          height: "100%",
+          margin: 8,
+        }}
       >
-        {columns.map(({ id, items, name }) => {
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
+        <DragDropContext
+          onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+        >
+          {columns.map(({ id, items, name }) => {
+            return (
               <div
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
-                <h2>{name}</h2>
-                <h5>{items.length}</h5>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+                >
+                  <h2>{name}</h2>
+                  <h5>{items.length}</h5>
+                </div>
+                <div style={{ margin: "8px" }}>
+                  <Droppable key={id} droppableId={id}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          style={{
+                            background: snapshot.isDraggingOver
+                              ? "lightblue"
+                              : "lightgrey",
+                            padding: 4,
+                            width: 250,
+                            minHeight: 500,
+                          }}
+                        >
+                          {items.map((item, index) => (
+                            <Draggable
+                              key={item.id}
+                              draggableId={item.id}
+                              index={index}
+                            >
+                              {(provided, snapshot) => {
+                                return (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={{
+                                      userSelect: "none",
+                                      padding: 16,
+                                      margin: "0 0 8px 0",
+                                      minHeight: "50px",
+                                      background: snapshot.isDragging
+                                        ? "#456c86"
+                                        : name === "Todo"
+                                        ? "#263B4A"
+                                        : name === "In Progress"
+                                        ? "#FFCC00"
+                                        : name === "Blocked"
+                                        ? "red"
+                                        : "green",
+                                      color: "white",
+                                      ...provided.draggableProps.style,
+                                    }}
+                                  >
+                                    {item.content}
+                                  </div>
+                                );
+                              }}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      );
+                    }}
+                  </Droppable>
+                </div>
               </div>
-              <div style={{ margin: "8px" }}>
-                <Droppable key={id} droppableId={id}>
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          background: snapshot.isDraggingOver
-                            ? "lightblue"
-                            : "lightgrey",
-                          padding: 4,
-                          width: 250,
-                          minHeight: 500,
-                        }}
-                      >
-                        {items.map((item, index) => (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
-                          >
-                            {(provided, snapshot) => {
-                              return (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    userSelect: "none",
-                                    padding: 16,
-                                    margin: "0 0 8px 0",
-                                    minHeight: "50px",
-                                    background: snapshot.isDragging
-                                      ? "#456c86"
-                                      : name === "Todo"
-                                      ? "#263B4A"
-                                      : name === "In Progress"
-                                      ? "#FFCC00"
-                                      : name === "Blocked"
-                                      ? "red"
-                                      : "green",
-                                    color: "white",
-                                    ...provided.draggableProps.style,
-                                  }}
-                                >
-                                  {item.content}
-                                </div>
-                              );
-                            }}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
-              </div>
-            </div>
-          );
-        })}
-      </DragDropContext>
-    </div>
+            );
+          })}
+        </DragDropContext>
+      </div>
+    </>
   );
 }
 
